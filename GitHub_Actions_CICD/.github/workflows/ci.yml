@@ -1,0 +1,44 @@
+name: CI/CD Pipeline for React App
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code from the repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # Navigate to React app folder and install dependencies
+      - name: Install dependencies
+        working-directory: ./my-react-app
+        run: npm install
+
+      # Run tests (if any)
+      - name: Run tests
+        working-directory: ./my-react-app
+        run: npm test -- --watchAll=false
+
+      # Build the app for production
+      - name: Build app
+        working-directory: ./my-react-app
+        run: npm run build
+
+      # Upload build as artifact (for review or deployment)
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-build
+          path: my-react-app/build
